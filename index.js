@@ -59,10 +59,12 @@ async function writePackageJson(dependencies) {
 async function updateAppExtras() {
   let source = await fs.readFile('./src/app/app-extras.module.ts', 'utf8');
 
+  // Get the NgModule decorator source.
   const ngModuleMatches = source.match(/@NgModule\s*\([\s\S]+\)/g);
 
   let ngModuleSource = ngModuleMatches[0];
 
+  // Ensure the NgModel decorator has an `exports` section.
   const exportsMatches = ngModuleSource.match(/(exports\s*:\s*\[[\s\S]*\])/g);
 
   let exportsSource;
@@ -79,13 +81,15 @@ async function updateAppExtras() {
     ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
   }
 
+  // Add the `AppSkyModule` to exports.
   const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
 
   ngModuleSource = `import {
   AppSkyModule
 } from './app-sky.module';
 
-` + ngModuleSource.replace(
+` +
+  ngModuleSource.replace(
     exportsSourceStart,
     exportsSourceStart + `
     AppSkyModule,`
