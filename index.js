@@ -7,37 +7,65 @@ const importPaths = require('./lib/import-paths');
 const sortUtils = require('./lib/sort-utils');
 const appSkyModule = require('./lib/app-sky-module');
 const appDependencies = require('./lib/app-dependencies');
+const jsonUtils = require('./lib/json-utils');
+const tsConfig = require('./lib/tsconfig');
+const tsLint = require('./lib/tslint');
+const webpack = require('./lib/webpack');
 
 /**
  * Alphabetizes dependencies, similar to the behavior of `npm install <package> --save`.
  * @param {*} dependencies Dependencies to sort.
  */
 function fixDependencyOrder(dependencies) {
-  const sortedDependencies = sortUtils.sortedKeys(dependencies);
+  if (dependencies) {
+    const sortedDependencies = sortUtils.sortedKeys(dependencies);
 
-  for (const dependency of sortedDependencies) {
-    const value = dependencies[dependency];
+    for (const dependency of sortedDependencies) {
+      const value = dependencies[dependency];
 
-    delete dependencies[dependency];
+      delete dependencies[dependency];
 
-    dependencies[dependency] = value;
+      dependencies[dependency] = value;
+    }
   }
 
   return dependencies;
+}
+
+async function getPackageJson() {
+  const packageJson = await jsonUtils.readJson('./package.json');
+
+  return packageJson;
+}
+
+function removeDependency(packageJson, packageName) {
+  delete packageJson.dependencies[packageName];
+  delete packageJson.devDependencies[packageName];
+  delete packageJson.peerDependencies[packageName];
 }
 
 /**
  * Updates the application's package.json dependencies and writes it to disk.
  * @param {*} dependencies
  */
-async function writePackageJson(dependencies) {
-  const packageJson = await fs.readJson('./package.json');
+async function writePackageJson(packageJson, isLib, dependencies) {
+  packageJson.dependencies = packageJson.dependencies || {};
+  packageJson.devDependencies = packageJson.devDependencies || {};
 
-  delete packageJson.dependencies['@blackbaud/skyux'];
-  delete packageJson.devDependencies['@blackbaud/skyux-builder'];
+  if (isLib) {
+    packageJson.peerDependencies = packageJson.peerDependencies || {};
+  }
+
+  removeDependency(packageJson, '@blackbaud/skyux');
+  removeDependency(packageJson, '@blackbaud/skyux-builder');
 
   for (const dependency of sortUtils.sortedKeys(dependencies.dependencies)) {
-    packageJson.dependencies[dependency] = dependencies.dependencies[dependency];
+    if (isLib) {
+      packageJson.devDependencies[dependency] = dependencies.dependencies[dependency];
+      packageJson.peerDependencies[dependency] = '^' + dependencies.dependencies[dependency];
+    } else {
+      packageJson.dependencies[dependency] = dependencies.dependencies[dependency];
+    }
   }
 
   for (const dependency of sortUtils.sortedKeys(dependencies.devDependencies)) {
@@ -47,12 +75,11 @@ async function writePackageJson(dependencies) {
   // Alphabetize the dependencies before writing them to disk.
   fixDependencyOrder(packageJson.dependencies);
   fixDependencyOrder(packageJson.devDependencies);
+  fixDependencyOrder(packageJson.peerDependencies);
 
-  await fs.writeJson(
+  await jsonUtils.writeJson(
     './package.json',
-    packageJson, {
-      spaces: 2
-    }
+    packageJson
   );
 }
 
@@ -104,21 +131,31 @@ async function updateAppExtras() {
  * Migrates the application from SKY UX 2 to SKY UX 3.
  */
 async function migrate() {
+  const packageJson = await getPackageJson();
+
+  const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
+
   const packageList = await packageMap.createPackageList();
 
   // Create Angular module file.
-  const moduleSource = appSkyModule.createAppSkyModule(packageList);
+  const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
 
   await fs.writeFile('./src/app/app-sky.module.ts', moduleSource);
 
   // Update package.json dependencies and devDependencies.
   const dependencies = await appDependencies.createPackageJsonDependencies(packageList);
 
-  await writePackageJson(dependencies);
+  await writePackageJson(packageJson, isLib, dependencies);
 
   await updateAppExtras();
 
   await importPaths.fixImportPaths();
+
+  await webpack.fixLoaders();
+
+  await tsConfig.fixTsConfig();
+
+  await tsLint.fixTsLint();
 
   if (await fs.exists('./package-lock.json')) {
     logger.info('Deleting package-lock.json file...');
