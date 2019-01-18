@@ -1,7 +1,9 @@
 'use strict';
 
 const fs = require('fs-extra');
+const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
+
 const packageMap = require('./lib/package-map');
 const importPaths = require('./lib/import-paths');
 const sortUtils = require('./lib/sort-utils');
@@ -33,7 +35,7 @@ function fixDependencyOrder(dependencies) {
 }
 
 async function getPackageJson() {
-  const packageJson = await jsonUtils.readJson('./package.json');
+  const packageJson = await jsonUtils.readJson(path.join('.', 'package.json'));
 
   return packageJson;
 }
@@ -48,7 +50,7 @@ function removeDependency(packageJson, packageName) {
  * Updates the application's package.json dependencies and writes it to disk.
  * @param {*} dependencies
  */
-async function writePackageJson(packageJson, isLib, dependencies) {
+async function writePackageJson(packageJson, isLib, dependencies, packageList) {
   packageJson.dependencies = packageJson.dependencies || {};
   packageJson.devDependencies = packageJson.devDependencies || {};
 
@@ -62,7 +64,10 @@ async function writePackageJson(packageJson, isLib, dependencies) {
   for (const dependency of sortUtils.sortedKeys(dependencies.dependencies)) {
     if (isLib) {
       packageJson.devDependencies[dependency] = dependencies.dependencies[dependency];
-      packageJson.peerDependencies[dependency] = '^' + dependencies.dependencies[dependency];
+
+      if (packageList[dependency]) {
+        packageJson.peerDependencies[dependency] = '^' + dependencies.dependencies[dependency];
+      }
     } else {
       packageJson.dependencies[dependency] = dependencies.dependencies[dependency];
     }
@@ -72,19 +77,26 @@ async function writePackageJson(packageJson, isLib, dependencies) {
     packageJson.devDependencies[dependency] = dependencies.devDependencies[dependency];
   }
 
+  if (isLib) {
+    packageJson.peerDependencies['@skyux-sdk/builder'] = packageJson.devDependencies['@skyux-sdk/builder'];
+  }
+
   // Alphabetize the dependencies before writing them to disk.
   fixDependencyOrder(packageJson.dependencies);
   fixDependencyOrder(packageJson.devDependencies);
   fixDependencyOrder(packageJson.peerDependencies);
 
   await jsonUtils.writeJson(
-    './package.json',
+    path.join('.', 'package.json'),
     packageJson
   );
 }
 
 async function updateAppExtras() {
-  let source = await fs.readFile('./src/app/app-extras.module.ts', 'utf8');
+  let source = await fs.readFile(
+    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    'utf8'
+  );
 
   // Get the NgModule decorator source.
   const ngModuleMatches = source.match(/@NgModule\s*\([\s\S]+\)/g);
@@ -124,7 +136,10 @@ async function updateAppExtras() {
 
   source = source.replace(ngModuleMatches[0], ngModuleSource);
 
-  await fs.writeFile('./src/app/app-extras.module.ts', source);
+  await fs.writeFile(
+    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    source
+  );
 }
 
 /**
@@ -140,12 +155,15 @@ async function migrate() {
   // Create Angular module file.
   const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
 
-  await fs.writeFile('./src/app/app-sky.module.ts', moduleSource);
+  await fs.writeFile(
+    path.join('.', 'src', 'app', 'app-sky.module.ts'),
+    moduleSource
+  );
 
   // Update package.json dependencies and devDependencies.
   const dependencies = await appDependencies.createPackageJsonDependencies(packageList);
 
-  await writePackageJson(packageJson, isLib, dependencies);
+  await writePackageJson(packageJson, isLib, dependencies, packageList);
 
   await updateAppExtras();
 
@@ -157,14 +175,18 @@ async function migrate() {
 
   await tsLint.fixTsLint();
 
-  if (await fs.exists('./package-lock.json')) {
+  const packageLockPath = path.join('.', 'package-lock.json');
+
+  if (await fs.exists(packageLockPath)) {
     logger.info('Deleting package-lock.json file...');
-    await fs.unlink('./package-lock.json');
+    await fs.unlink(packageLockPath);
   }
 
-  if (await fs.exists('./node_modules')) {
+  const nodeModulesPath = path.join('.', 'node_modules');
+
+  if (await fs.exists(nodeModulesPath)) {
     logger.info('Deleting node_modules directory...');
-    await fs.remove('./node_modules');
+    await fs.remove(nodeModulesPath);
   }
 
   logger.info('Done. For next steps, see the SKY UX migration guide at https://developer.blackbaud.com/skyux/migration-guide');
