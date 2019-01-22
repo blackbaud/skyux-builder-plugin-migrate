@@ -41,9 +41,15 @@ async function getPackageJson() {
 }
 
 function removeDependency(packageJson, packageName) {
-  delete packageJson.dependencies[packageName];
-  delete packageJson.devDependencies[packageName];
-  delete packageJson.peerDependencies[packageName];
+  function deletePackageIn(dependencySection) {
+    if (packageJson[dependencySection]) {
+      delete packageJson[dependencySection][packageName];
+    }
+  }
+
+  deletePackageIn('dependencies');
+  deletePackageIn('devDependencies');
+  deletePackageIn('peerDependencies');
 }
 
 /**
