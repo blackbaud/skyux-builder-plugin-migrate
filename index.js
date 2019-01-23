@@ -33,7 +33,7 @@ function fixDependencyOrder(dependencies) {
 }
 
 async function getPackageJson() {
-  const packageJson = await jsonUtils.readJson(path.join('.', 'package.json'));
+  const packageJson = await jsonUtils.readJson('package.json');
 
   return packageJson;
 }
@@ -91,14 +91,14 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
   fixDependencyOrder(packageJson.peerDependencies);
 
   await jsonUtils.writeJson(
-    path.join('.', 'package.json'),
+    'package.json',
     packageJson
   );
 }
 
 async function updateAppExtras() {
   let source = await fs.readFile(
-    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    path.join('src', 'app', 'app-extras.module.ts'),
     'utf8'
   );
 
@@ -141,7 +141,7 @@ async function updateAppExtras() {
   source = source.replace(ngModuleMatches[0], ngModuleSource);
 
   await fs.writeFile(
-    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    path.join('src', 'app', 'app-extras.module.ts'),
     source
   );
 }
@@ -160,7 +160,7 @@ async function migrate() {
   const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
 
   await fs.writeFile(
-    path.join('.', 'src', 'app', 'app-sky.module.ts'),
+    path.join('src', 'app', 'app-sky.module.ts'),
     moduleSource
   );
 
@@ -179,14 +179,14 @@ async function migrate() {
 
   await tsLint.fixTsLint();
 
-  const packageLockPath = path.join('.', 'package-lock.json');
+  const packageLockPath = 'package-lock.json';
 
   if (await fs.exists(packageLockPath)) {
     logger.info('Deleting package-lock.json file...');
     await fs.unlink(packageLockPath);
   }
 
-  const nodeModulesPath = path.join('.', 'node_modules');
+  const nodeModulesPath = 'node_modules';
 
   if (await fs.exists(nodeModulesPath)) {
     logger.info('Deleting node_modules directory...');
