@@ -22,7 +22,7 @@ describe('Webpack', () => {
   });
 
   afterEach(() => {
-    mock.stop('fs-extra');
+    mock.stopAll();
   });
 
   it('should remove json-loader prefixes from require statements', async () => {

@@ -1,5 +1,3 @@
-'use strict';
-
 const appSkyModule = require('../../lib/app-sky-module');
 
 describe('App SKY module', () => {
