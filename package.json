@@ -11,6 +11,10 @@
   },
   "author": "Blackbaud, Inc.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackbaud/skyux-builder-plugin-migrate.git"
+  },
   "dependencies": {
     "@blackbaud/skyux-logger": "1.1.0",
     "find-in-files": "0.5.0",
