@@ -82,7 +82,7 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
   }
 
   if (isLib) {
-    packageJson.peerDependencies['@skyux-sdk/builder'] = packageJson.devDependencies['@skyux-sdk/builder'];
+    packageJson.peerDependencies['@skyux-sdk/builder'] = '^' + packageJson.devDependencies['@skyux-sdk/builder'];
   }
 
   // Alphabetize the dependencies before writing them to disk.
@@ -118,14 +118,15 @@ async function updateAppExtras() {
     const ngModuleSourceStart = ngModuleSource.substr(0, ngModuleSource.indexOf('{') + 1);
 
     exportsSource = `
-  exports: [
-  ],`;
+  exports: []
+`;
 
     ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
   }
 
   // Add the `AppSkyModule` to exports.
   const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
+  const exportsSourceEnd = exportsSource.substr(exportsSourceStart.length).trim();
 
   ngModuleSource = `import {
   AppSkyModule
@@ -135,7 +136,7 @@ async function updateAppExtras() {
   ngModuleSource.replace(
     exportsSourceStart,
     exportsSourceStart + `
-    AppSkyModule,`
+    AppSkyModule${exportsSourceEnd === ']' ? '\n  ' : ','}`
   );
 
   source = source.replace(ngModuleMatches[0], ngModuleSource);
@@ -196,10 +197,10 @@ async function migrate() {
   logger.info('Done. For next steps, see the SKY UX migration guide at https://developer.blackbaud.com/skyux/migration-guide');
 }
 
-function runCommand(command) {
+async function runCommand(command) {
   switch (command) {
     case 'migrate':
-      migrate();
+      await migrate();
       break;
     default:
       return false;
