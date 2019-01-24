@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs-extra');
 const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
@@ -35,7 +33,7 @@ function fixDependencyOrder(dependencies) {
 }
 
 async function getPackageJson() {
-  const packageJson = await jsonUtils.readJson(path.join('.', 'package.json'));
+  const packageJson = await jsonUtils.readJson('package.json');
 
   return packageJson;
 }
@@ -84,7 +82,7 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
   }
 
   if (isLib) {
-    packageJson.peerDependencies['@skyux-sdk/builder'] = packageJson.devDependencies['@skyux-sdk/builder'];
+    packageJson.peerDependencies['@skyux-sdk/builder'] = '^' + packageJson.devDependencies['@skyux-sdk/builder'];
   }
 
   // Alphabetize the dependencies before writing them to disk.
@@ -93,14 +91,14 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
   fixDependencyOrder(packageJson.peerDependencies);
 
   await jsonUtils.writeJson(
-    path.join('.', 'package.json'),
+    'package.json',
     packageJson
   );
 }
 
 async function updateAppExtras() {
   let source = await fs.readFile(
-    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    path.join('src', 'app', 'app-extras.module.ts'),
     'utf8'
   );
 
@@ -120,14 +118,15 @@ async function updateAppExtras() {
     const ngModuleSourceStart = ngModuleSource.substr(0, ngModuleSource.indexOf('{') + 1);
 
     exportsSource = `
-  exports: [
-  ],`;
+  exports: []
+`;
 
     ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
   }
 
   // Add the `AppSkyModule` to exports.
   const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
+  const exportsSourceEnd = exportsSource.substr(exportsSourceStart.length).trim();
 
   ngModuleSource = `import {
   AppSkyModule
@@ -137,13 +136,13 @@ async function updateAppExtras() {
   ngModuleSource.replace(
     exportsSourceStart,
     exportsSourceStart + `
-    AppSkyModule,`
+    AppSkyModule${exportsSourceEnd === ']' ? '\n  ' : ','}`
   );
 
   source = source.replace(ngModuleMatches[0], ngModuleSource);
 
   await fs.writeFile(
-    path.join('.', 'src', 'app', 'app-extras.module.ts'),
+    path.join('src', 'app', 'app-extras.module.ts'),
     source
   );
 }
@@ -162,7 +161,7 @@ async function migrate() {
   const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
 
   await fs.writeFile(
-    path.join('.', 'src', 'app', 'app-sky.module.ts'),
+    path.join('src', 'app', 'app-sky.module.ts'),
     moduleSource
   );
 
@@ -181,14 +180,14 @@ async function migrate() {
 
   await tsLint.fixTsLint();
 
-  const packageLockPath = path.join('.', 'package-lock.json');
+  const packageLockPath = 'package-lock.json';
 
   if (await fs.exists(packageLockPath)) {
     logger.info('Deleting package-lock.json file...');
     await fs.unlink(packageLockPath);
   }
 
-  const nodeModulesPath = path.join('.', 'node_modules');
+  const nodeModulesPath = 'node_modules';
 
   if (await fs.exists(nodeModulesPath)) {
     logger.info('Deleting node_modules directory...');
@@ -198,10 +197,10 @@ async function migrate() {
   logger.info('Done. For next steps, see the SKY UX migration guide at https://developer.blackbaud.com/skyux/migration-guide');
 }
 
-function runCommand(command) {
+async function runCommand(command) {
   switch (command) {
     case 'migrate':
-      migrate();
+      await migrate();
       break;
     default:
       return false;
