@@ -1,5 +1,5 @@
 {
-  "name": "@blackbaud/skyux-builder-plugin-migrate",
+  "name": "@skyux-sdk/builder-plugin-migrate",
   "version": "1.0.0",
   "description": "Migrates a SKY UX application from 2 to 3",
   "main": "index.js",
@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blackbaud/skyux-builder-plugin-migrate.git"
+    "url": "git+https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate.git"
   },
   "dependencies": {
     "@blackbaud/skyux-logger": "1.1.0",
