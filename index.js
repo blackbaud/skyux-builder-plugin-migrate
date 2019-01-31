@@ -163,7 +163,6 @@ export class AppExtrasModule { }
 `;
   }
 
-  console.log('WRITING FILE');
   await fs.writeFile(
     appExtrasPath,
     source
