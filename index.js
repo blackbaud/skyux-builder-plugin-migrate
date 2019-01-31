@@ -97,52 +97,75 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
 }
 
 async function updateAppExtras() {
-  let source = await fs.readFile(
-    path.join('src', 'app', 'app-extras.module.ts'),
-    'utf8'
-  );
+  const appExtrasPath = path.join('src', 'app', 'app-extras.module.ts');
 
-  // Get the NgModule decorator source.
-  const ngModuleMatches = source.match(/@NgModule\s*\([\s\S]+\)/g);
+  let source;
 
-  let ngModuleSource = ngModuleMatches[0];
+  if (await fs.exists(appExtrasPath)) {
+    source = await fs.readFile(
+      appExtrasPath,
+      'utf8'
+    );
 
-  // Ensure the NgModel decorator has an `exports` section.
-  const exportsMatches = ngModuleSource.match(/(exports\s*:\s*\[[\s\S]*\])/g);
+    // Get the NgModule decorator source.
+    const ngModuleMatches = source.match(/@NgModule\s*\([\s\S]+\)/g);
 
-  let exportsSource;
+    let ngModuleSource = ngModuleMatches[0];
 
-  if (exportsMatches) {
-    exportsSource = exportsMatches[0];
-  } else {
-    const ngModuleSourceStart = ngModuleSource.substr(0, ngModuleSource.indexOf('{') + 1);
+    // Ensure the NgModel decorator has an `exports` section.
+    const exportsMatches = ngModuleSource.match(/(exports\s*:\s*\[[\s\S]*\])/g);
 
-    exportsSource = `
+    let exportsSource;
+
+    if (exportsMatches) {
+      exportsSource = exportsMatches[0];
+    } else {
+      const ngModuleSourceStart = ngModuleSource.substr(0, ngModuleSource.indexOf('{') + 1);
+
+      exportsSource = `
   exports: []
 `;
 
-    ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
-  }
+      ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
+    }
 
-  // Add the `AppSkyModule` to exports.
-  const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
-  const exportsSourceEnd = exportsSource.substr(exportsSourceStart.length).trim();
+    // Add the `AppSkyModule` to exports.
+    const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
+    const exportsSourceEnd = exportsSource.substr(exportsSourceStart.length).trim();
 
-  ngModuleSource = `import {
+    ngModuleSource = `import {
   AppSkyModule
 } from './app-sky.module';
 
 ` +
-  ngModuleSource.replace(
-    exportsSourceStart,
-    exportsSourceStart + `
+    ngModuleSource.replace(
+      exportsSourceStart,
+      exportsSourceStart + `
     AppSkyModule${exportsSourceEnd === ']' ? '\n  ' : ','}`
-  );
+    );
 
-  source = source.replace(ngModuleMatches[0], ngModuleSource);
+    source = source.replace(ngModuleMatches[0], ngModuleSource);
+  } else {
+    source = `import {
+  NgModule
+} from '@angular/core';
 
+import {
+  AppSkyModule
+} from './app-sky.module';
+
+@NgModule({
+  exports: [
+    AppSkyModule
+  ]
+})
+export class AppExtrasModule { }
+`;
+  }
+
+  console.log('WRITING FILE');
   await fs.writeFile(
-    path.join('src', 'app', 'app-extras.module.ts'),
+    appExtrasPath,
     source
   );
 }

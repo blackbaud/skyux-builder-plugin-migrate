@@ -26,7 +26,13 @@ export class AppExtrasModule { }
 `
       ),
       writeFile: jasmine.createSpy('writeFile'),
-      exists: jasmine.createSpy('exists'),
+      exists: jasmine.createSpy('exists').and.callFake(async (filePath) => {
+        if (filePath === path.join('src', 'app', 'app-extras.module.ts') ) {
+          return Promise.resolve(true);
+        }
+
+        return Promise.resolve(false);
+      }),
       unlink: jasmine.createSpy('unlink'),
       remove: jasmine.createSpy('remove')
     };
@@ -242,6 +248,31 @@ import {
   exports: [
     AppSkyModule,
     FooModule
+  ]
+})
+export class AppExtrasModule { }
+`
+    );
+  });
+
+  it('should create an app extras module if one does not exist', async () => {
+    fsExtraMock.exists.and.returnValue(false);
+
+    await index.runCommand('migrate');
+
+    expect(fsExtraMock.writeFile).toHaveBeenCalledWith(
+      path.join('src', 'app', 'app-extras.module.ts'),
+      `import {
+  NgModule
+} from '@angular/core';
+
+import {
+  AppSkyModule
+} from './app-sky.module';
+
+@NgModule({
+  exports: [
+    AppSkyModule
   ]
 })
 export class AppExtrasModule { }
