@@ -1,0 +1,109 @@
+const mock = require('mock-require');
+
+describe('Upgrade', () => {
+  let jsonUtilsMock;
+  let latestVersionMock;
+  let cleanupMock;
+  let upgrade;
+
+  beforeEach(() => {
+    jsonUtilsMock = {
+      readJson: jasmine.createSpy('readJson'),
+      writeJson: jasmine.createSpy('writeJson')
+    };
+
+    latestVersionMock = jasmine.createSpy('latestVersion').and.callFake((packageName) => {
+      switch (packageName) {
+        case '@foo/bar':
+          return '12.2.5';
+        case '@foo/baz':
+          return '4.5.6';
+      }
+    });
+
+    cleanupMock = {
+      deleteDependencies: jasmine.createSpy('deleteDependencies')
+    };
+
+    mock('latest-version', latestVersionMock);
+
+    mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../lib/cleanup', cleanupMock);
+
+    mock.reRequire('../../lib/app-dependencies');
+    upgrade = mock.reRequire('../../cli/upgrade');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
+
+  it('should upgrade an application', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      dependencies: {
+        '@foo/bar': '12.2.3'
+      },
+      devDependencies: {
+        '@foo/baz': '4.5.6',
+        'from-branch': 'foo/bar#branch'
+      }
+    });
+
+    await upgrade();
+
+    expect(latestVersionMock).toHaveBeenCalledWith(
+      '@foo/bar',
+      {
+        version: '12'
+      }
+    );
+
+    expect(latestVersionMock).toHaveBeenCalledWith(
+      '@foo/baz',
+      {
+        version: '4'
+      }
+    );
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        dependencies: {
+          '@foo/bar': '12.2.5'
+        },
+        devDependencies: {
+          '@foo/baz': '4.5.6',
+          'from-branch': 'foo/bar#branch'
+        }
+      }
+    );
+
+    expect(cleanupMock.deleteDependencies).toHaveBeenCalled();
+  });
+
+  it('should handle missing dependency section', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      devDependencies: {
+        '@foo/bar': '12.2.3'
+      }
+    });
+
+    await upgrade();
+
+    expect(latestVersionMock).toHaveBeenCalledWith(
+      '@foo/bar',
+      {
+        version: '12'
+      }
+    );
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        devDependencies: {
+          '@foo/bar': '12.2.5'
+        }
+      }
+    );
+  });
+});
