@@ -2,6 +2,7 @@ const mock = require('mock-require');
 
 describe('Upgrade', () => {
   let jsonUtilsMock;
+  let loggerMock;
   let latestVersionMock;
   let cleanupMock;
   let upgrade;
@@ -12,12 +13,18 @@ describe('Upgrade', () => {
       writeJson: jasmine.createSpy('writeJson')
     };
 
+    loggerMock = {
+      info: jasmine.createSpy('info')
+    };
+
     latestVersionMock = jasmine.createSpy('latestVersion').and.callFake((packageName) => {
       switch (packageName) {
         case '@foo/bar':
           return '12.2.5';
         case '@foo/baz':
           return '4.5.6';
+        case 'typescript':
+          return '2.2';
       }
     });
 
@@ -25,6 +32,7 @@ describe('Upgrade', () => {
       deleteDependencies: jasmine.createSpy('deleteDependencies')
     };
 
+    mock('@blackbaud/skyux-logger', loggerMock);
     mock('latest-version', latestVersionMock);
 
     mock('../../lib/json-utils', jsonUtilsMock);
@@ -79,6 +87,29 @@ describe('Upgrade', () => {
     );
 
     expect(cleanupMock.deleteDependencies).toHaveBeenCalled();
+  });
+
+  it('should not upgrade TypeScript', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      devDependencies: {
+        'typescript': '2.1'
+      }
+    });
+
+    await upgrade();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        devDependencies: {
+          'typescript': '2.1'
+        }
+      }
+    );
+
+    expect(loggerMock.info).toHaveBeenCalledWith(
+      jasmine.stringMatching(/This project includes a reference to TypeScript/)
+    );
   });
 
   it('should handle missing dependency section', async () => {
