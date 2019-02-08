@@ -29,7 +29,7 @@ describe('SKY UX config', () => {
       {
         app: {
           styles: [
-            './node_modules/@skyux/theme/css/sky.css'
+            '@skyux/theme/css/sky.css'
           ]
         }
       }
@@ -40,7 +40,7 @@ describe('SKY UX config', () => {
     jsonUtilsMock.readJson.and.returnValue({
       app: {
         styles: [
-          './node_modules/@skyux/theme/css/sky.css'
+          '@skyux/theme/css/sky.css'
         ]
       }
     });
@@ -52,7 +52,7 @@ describe('SKY UX config', () => {
       {
         app: {
           styles: [
-            './node_modules/@skyux/theme/css/sky.css'
+            '@skyux/theme/css/sky.css'
           ]
         }
       }
@@ -69,7 +69,7 @@ describe('SKY UX config', () => {
       {
         app: {
           styles: [
-            './node_modules/@skyux/theme/css/sky.css'
+            '@skyux/theme/css/sky.css'
           ]
         }
       }
