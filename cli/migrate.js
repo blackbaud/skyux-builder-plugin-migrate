@@ -103,17 +103,19 @@ async function updateAppExtras() {
       exportsSource = exportsMatches[0];
     } else {
       const ngModuleSourceStart = ngModuleSource.substr(0, ngModuleSource.indexOf('{') + 1);
+      const ngModuleSourceEnd = ngModuleSource.substr(ngModuleSourceStart.length);
+
+      const hasOtherModuleProps = ngModuleSourceEnd.replace(/\s/g, '') !== '})';
 
       exportsSource = `
-  exports: []
-`;
+  exports: []${hasOtherModuleProps ? ',' : '\n'}`;
 
       ngModuleSource = ngModuleSource.replace(ngModuleSourceStart, ngModuleSourceStart + exportsSource);
     }
 
     // Add the `AppSkyModule` to exports.
     const exportsSourceStart = exportsSource.substr(0, exportsSource.indexOf('[') + 1);
-    const exportsSourceEnd = exportsSource.substr(exportsSourceStart.length).trim();
+    const exportsSourceEnd = exportsSource.substring(exportsSourceStart.length, exportsSource.indexOf(']') + 1);
 
     ngModuleSource = `import {
   AppSkyModule

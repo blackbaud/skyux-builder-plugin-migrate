@@ -220,6 +220,46 @@ export class AppExtrasModule { }
     );
   });
 
+  it('should add an exports section to app extras with a comma if other properties are present', async () => {
+    fsExtraMock.readFile.and.returnValue(
+      `import {
+  NgModule
+} from '@angular/core';
+
+@NgModule({
+  providers: [
+    FooService
+  ]
+})
+export class AppExtrasModule { }
+`
+    );
+
+    await migrate();
+
+    expect(fsExtraMock.writeFile).toHaveBeenCalledWith(
+      path.join('src', 'app', 'app-extras.module.ts'),
+      `import {
+  NgModule
+} from '@angular/core';
+
+import {
+  AppSkyModule
+} from './app-sky.module';
+
+@NgModule({
+  exports: [
+    AppSkyModule
+  ],
+  providers: [
+    FooService
+  ]
+})
+export class AppExtrasModule { }
+`
+    );
+  });
+
   it('should preserve existing app extras exports', async () => {
     fsExtraMock.readFile.and.returnValue(
       `import {
