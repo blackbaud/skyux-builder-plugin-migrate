@@ -8,6 +8,7 @@ describe('Migrate', () => {
   let packageMapMock;
   let importPathsMock;
   let jsonUtilsMock;
+  let skyuxConfigMock;
   let tsConfigMock;
   let tsLintMock;
   let webpackMock;
@@ -90,6 +91,10 @@ export class AppExtrasModule { }
       fixImportPaths: jasmine.createSpy('fixImportPaths')
     };
 
+    skyuxConfigMock = {
+      updateSkyuxConfig: jasmine.createSpy('updateSkyuxConfig')
+    };
+
     webpackMock = {
       fixLoaders: jasmine.createSpy('fixLoaders')
     };
@@ -108,6 +113,7 @@ export class AppExtrasModule { }
     mock('../../lib/package-map', packageMapMock);
     mock('../../lib/import-paths', importPathsMock);
     mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../lib/skyux-config', skyuxConfigMock);
     mock('../../lib/tsconfig', tsConfigMock);
     mock('../../lib/tslint', tsLintMock);
     mock('../../lib/webpack', webpackMock);
@@ -155,6 +161,8 @@ import {
 export class AppExtrasModule { }
 `
     );
+
+    expect(skyuxConfigMock.updateSkyuxConfig).toHaveBeenCalled();
   });
 
   it('should add dependencies and devDependencies if none are specified', async () => {

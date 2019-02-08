@@ -8,6 +8,7 @@ const sortUtils = require('../lib/sort-utils');
 const appSkyModule = require('../lib/app-sky-module');
 const appDependencies = require('../lib/app-dependencies');
 const jsonUtils = require('../lib/json-utils');
+const skyuxConfig = require('../lib/skyux-config');
 const tsConfig = require('../lib/tsconfig');
 const tsLint = require('../lib/tslint');
 const webpack = require('../lib/webpack');
@@ -174,6 +175,8 @@ async function migrate() {
   await writePackageJson(packageJson, isLib, dependencies, packageList);
 
   await updateAppExtras();
+
+  await skyuxConfig.updateSkyuxConfig();
 
   await importPaths.fixImportPaths();
 
