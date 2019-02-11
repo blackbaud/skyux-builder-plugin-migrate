@@ -27,8 +27,6 @@ import {
   SkyChevronModule
 } from '@skyux/indicators';
 
-require('style-loader!@skyux/theme/css/sky.css');
-
 @NgModule({
   exports: [
     SkyAlertModule,
