@@ -1,6 +1,6 @@
 # 1.1.1 (2019-02-19)
 
-- Added missing types to package map. [#11] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/issues/11)
+- Added missing types to package map. [#11] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/11)
 
 # 1.1.0 (2019-02-11)
 
