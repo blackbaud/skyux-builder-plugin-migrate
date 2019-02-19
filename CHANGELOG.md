@@ -1,3 +1,7 @@
+# 1.1.1 (2019-02-19)
+
+- Added missing types to package map. [#11] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/issues/11)
+
 # 1.1.0 (2019-02-11)
 
 - Inject the SKY UX stylesheet using `skyuxconfig.json` instead of a `require()` statement in `app-sky.module.ts`. [#5] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/issues/5)
