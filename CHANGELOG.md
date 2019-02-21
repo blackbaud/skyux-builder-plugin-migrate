@@ -1,3 +1,7 @@
+# 1.1.2 (2019-02-21)
+
+- Added logic to not add `AppSkyModule` to `AppExtrasModule` if it had been added by a previous run of the migration plugin. [#13] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/13)
+
 # 1.1.1 (2019-02-19)
 
 - Added missing types to package map. [#11] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/11)

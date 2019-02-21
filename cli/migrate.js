@@ -89,6 +89,14 @@ async function updateAppExtras() {
       'utf8'
     );
 
+    if (source.indexOf('AppSkyModule') >= 0) {
+      logger.info(
+        'It appears the migration plugin has already run on this project.  Skipping adding AppSkyModule to AppExtrasModule.'
+      );
+
+      return;
+    }
+
     // Get the NgModule decorator source.
     const ngModuleMatches = source.match(/@NgModule\s*\([\s\S]+\)/g);
 
