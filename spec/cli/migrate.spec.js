@@ -369,4 +369,34 @@ export class AppExtrasModule { }
     );
   });
 
+  it('should not add AppSkyModule to app extras if it already exists', async () => {
+    fsExtraMock.readFile.and.returnValue(
+      `import {
+  NgModule
+} from '@angular/core';
+
+import {
+  AppSkyModule
+} from './app-sky.module';
+
+@NgModule({
+  exports: [
+    AppSkyModule
+  ]
+  providers: [
+    FooService
+  ]
+})
+export class AppExtrasModule { }
+`
+    );
+
+    await migrate();
+
+    expect(fsExtraMock.writeFile).not.toHaveBeenCalledWith(
+      path.join('src', 'app', 'app-extras.module.ts'),
+      jasmine.any(String)
+    );
+  });
+
 });
