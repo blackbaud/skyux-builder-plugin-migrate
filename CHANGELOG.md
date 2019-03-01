@@ -1,3 +1,9 @@
+# 1.2.0 (2019-03-01)
+
+- Add `.skypagestmp` to `.gitignore` file during migration if it is not present. [#18] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/18)
+
+- Update `.nvmrc` file to `lts/dubnium` during migration. [#18] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/18)
+
 # 1.1.2 (2019-02-21)
 
 - Added logic to not add `AppSkyModule` to `AppExtrasModule` if it had been added by a previous run of the migration plugin. [#13] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/13)
