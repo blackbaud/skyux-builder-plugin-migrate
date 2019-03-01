@@ -12,6 +12,8 @@ const skyuxConfig = require('../lib/skyux-config');
 const tsConfig = require('../lib/tsconfig');
 const tsLint = require('../lib/tslint');
 const webpack = require('../lib/webpack');
+const nvmrc = require('../lib/nvmrc');
+const gitignore = require('../lib/gitignore');
 const cleanup = require('../lib/cleanup');
 
 async function getPackageJson() {
@@ -195,6 +197,10 @@ async function migrate() {
   await tsConfig.fixTsConfig();
 
   await tsLint.fixTsLint();
+
+  await nvmrc.updateNvmrc();
+
+  await gitignore.fixGitignore();
 
   await cleanup.deleteDependencies();
 
