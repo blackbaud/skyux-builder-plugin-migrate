@@ -12,6 +12,8 @@ describe('Migrate', () => {
   let tsConfigMock;
   let tsLintMock;
   let webpackMock;
+  let nvmrcMock;
+  let gitignoreMock;
   let cleanupMock;
 
   beforeEach(() => {
@@ -107,6 +109,14 @@ export class AppExtrasModule { }
       fixTsLint: jasmine.createSpy('fixTsLint')
     };
 
+    nvmrcMock = {
+      updateNvmrc: jasmine.createSpy('updateNvmrc')
+    };
+
+    gitignoreMock = {
+      fixGitignore: jasmine.createSpy('fixGitignore')
+    };
+
     mock('fs-extra', fsExtraMock);
 
     mock('../../lib/app-dependencies', appDependenciesMock);
@@ -117,6 +127,8 @@ export class AppExtrasModule { }
     mock('../../lib/tsconfig', tsConfigMock);
     mock('../../lib/tslint', tsLintMock);
     mock('../../lib/webpack', webpackMock);
+    mock('../../lib/nvmrc', nvmrcMock);
+    mock('../../lib/gitignore', gitignoreMock);
     mock('../../lib/cleanup', cleanupMock);
 
     migrate = mock.reRequire('../../cli/migrate');
@@ -163,6 +175,8 @@ export class AppExtrasModule { }
     );
 
     expect(skyuxConfigMock.updateSkyuxConfig).toHaveBeenCalled();
+    expect(nvmrcMock.updateNvmrc).toHaveBeenCalled();
+    expect(gitignoreMock.fixGitignore).toHaveBeenCalled();
   });
 
   it('should add dependencies and devDependencies if none are specified', async () => {
