@@ -4,13 +4,16 @@ describe('Index', () => {
   let index;
   let migrateMock;
   let upgradeMock;
+  let versionMock;
 
   beforeEach(() => {
     migrateMock = jasmine.createSpy('migrate');
     upgradeMock = jasmine.createSpy('upgrade');
+    versionMock = jasmine.createSpy('version');
 
     mock('../cli/migrate', migrateMock);
     mock('../cli/upgrade', upgradeMock);
+    mock('../cli/version', versionMock);
 
     index = mock.reRequire('../index');
   });
@@ -31,6 +34,14 @@ describe('Index', () => {
     const result = await index.runCommand('upgrade');
 
     expect(upgradeMock).toHaveBeenCalled();
+
+    expect(result).toBe(true);
+  });
+
+  it('should process the version command', async () => {
+    const result = await index.runCommand('version');
+
+    expect(versionMock).toHaveBeenCalled();
 
     expect(result).toBe(true);
   });

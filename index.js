@@ -6,6 +6,9 @@ async function runCommand(command) {
     case 'upgrade':
       await require('./cli/upgrade')();
       break;
+    case 'version':
+      await require('./cli/version')();
+      break;
     default:
       return false;
   }
