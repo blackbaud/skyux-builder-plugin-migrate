@@ -1,10 +1,13 @@
 const logger = require('@blackbaud/skyux-logger');
 
+const pluginVersion = require('../lib/plugin-version');
 const appDependencies = require('../lib/app-dependencies');
 const jsonUtils = require('../lib/json-utils');
 const cleanup = require('../lib/cleanup');
 
 async function upgrade() {
+  await pluginVersion.verifyLatestVersion();
+
   const packageJson = await jsonUtils.readJson('package.json');
 
   await appDependencies.upgradeDependencies(packageJson.dependencies);

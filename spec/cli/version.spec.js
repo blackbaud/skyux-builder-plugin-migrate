@@ -1,18 +1,17 @@
 const mock = require('mock-require');
-const path = require('path');
 
 describe('Version', () => {
   let version;
   let loggerMock;
-  let jsonUtilsMock;
+  let pluginVersionMock;
 
   beforeEach(() => {
     loggerMock = {
       info: jasmine.createSpy('info')
     };
 
-    jsonUtilsMock = {
-      readJson: jasmine.createSpy('readJson').and.returnValue(
+    pluginVersionMock = {
+      getPackageJson: jasmine.createSpy('getPackageJson').and.returnValue(
         {
           name: '@skyux-sdk/builder-plugin-migrate',
           version: '1.2.3'
@@ -22,9 +21,13 @@ describe('Version', () => {
 
     mock('@blackbaud/skyux-logger', loggerMock);
 
-    mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../lib/plugin-version', pluginVersionMock);
 
     version = mock.reRequire('../../cli/version');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
   });
 
   it('should log the current version', async () => {

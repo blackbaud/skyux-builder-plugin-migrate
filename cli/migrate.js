@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
 
+const pluginVersion = require('../lib/plugin-version');
 const packageMap = require('../lib/package-map');
 const importPaths = require('../lib/import-paths');
 const sortUtils = require('../lib/sort-utils');
@@ -167,6 +168,8 @@ export class AppExtrasModule { }
  * Migrates the application from SKY UX 2 to SKY UX 3.
  */
 async function migrate() {
+  await pluginVersion.verifyLatestVersion();
+
   const packageJson = await getPackageJson();
 
   const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
