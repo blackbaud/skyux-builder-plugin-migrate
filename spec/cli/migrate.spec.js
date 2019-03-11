@@ -14,6 +14,7 @@ describe('Migrate', () => {
   let webpackMock;
   let nvmrcMock;
   let gitignoreMock;
+  let pluginVersionMock;
   let cleanupMock;
 
   beforeEach(() => {
@@ -117,6 +118,10 @@ export class AppExtrasModule { }
       fixGitignore: jasmine.createSpy('fixGitignore')
     };
 
+    pluginVersionMock = {
+      verifyLatestVersion: jasmine.createSpy('verifyLatestVersion')
+    };
+
     mock('fs-extra', fsExtraMock);
 
     mock('../../lib/app-dependencies', appDependenciesMock);
@@ -129,6 +134,7 @@ export class AppExtrasModule { }
     mock('../../lib/webpack', webpackMock);
     mock('../../lib/nvmrc', nvmrcMock);
     mock('../../lib/gitignore', gitignoreMock);
+    mock('../../lib/plugin-version', pluginVersionMock);
     mock('../../lib/cleanup', cleanupMock);
 
     migrate = mock.reRequire('../../cli/migrate');
@@ -174,6 +180,7 @@ export class AppExtrasModule { }
 `
     );
 
+    expect(pluginVersionMock.verifyLatestVersion).toHaveBeenCalled();
     expect(skyuxConfigMock.updateSkyuxConfig).toHaveBeenCalled();
     expect(nvmrcMock.updateNvmrc).toHaveBeenCalled();
     expect(gitignoreMock.fixGitignore).toHaveBeenCalled();
