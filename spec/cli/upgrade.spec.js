@@ -5,6 +5,7 @@ describe('Upgrade', () => {
   let loggerMock;
   let latestVersionMock;
   let cleanupMock;
+  let pluginVersionMock;
   let upgrade;
 
   beforeEach(() => {
@@ -28,6 +29,10 @@ describe('Upgrade', () => {
       }
     });
 
+    pluginVersionMock = {
+      verifyLatestVersion: jasmine.createSpy('verifyLatestVersion')
+    };
+
     cleanupMock = {
       deleteDependencies: jasmine.createSpy('deleteDependencies')
     };
@@ -36,6 +41,7 @@ describe('Upgrade', () => {
     mock('latest-version', latestVersionMock);
 
     mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../lib/plugin-version', pluginVersionMock);
     mock('../../lib/cleanup', cleanupMock);
 
     mock.reRequire('../../lib/app-dependencies');
@@ -58,6 +64,8 @@ describe('Upgrade', () => {
     });
 
     await upgrade();
+
+    expect(pluginVersionMock.verifyLatestVersion).toHaveBeenCalled();
 
     expect(latestVersionMock).toHaveBeenCalledWith(
       '@foo/bar',
