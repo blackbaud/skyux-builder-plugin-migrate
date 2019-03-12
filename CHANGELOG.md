@@ -1,3 +1,8 @@
+# 1.3.0 (2019-03-12)
+
+- Added check to make sure client is running the latest version of the plugin. [#22](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/22)
+- Added the following types to the package map: `SkyDateFormatter`, `SkyProgressIndicatorChange`, `SkyProgressIndicatorDisplayMode`, `SkyProgressIndicatorMessageType`, and `SkyUrlValidationDirective`. [#26](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/26) [#27](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/27)
+
 # 1.2.0 (2019-03-01)
 
 - Add `.skypagestmp` to `.gitignore` file during migration if it is not present. [#18] (https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/18)
