@@ -1,3 +1,7 @@
+# 1.4.0 (2019-03-19)
+
+- Added `SkyAutocompleteSearchFunctionFilter`, `SkyEmailValidationDirective`, `SkyNavbarModule`, and `SkySectionedFormComponent` types to package map. [#35](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/35)
+
 # 1.3.0 (2019-03-12)
 
 - Added check to ensure client is running latest version of plugin. [#22](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/22)
