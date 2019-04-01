@@ -22,31 +22,52 @@ describe('Import paths', () => {
   });
 
   afterEach(() => {
-    mock.stop('fs-extra');
+    mock.stopAll();
   });
 
   it('should update import paths', async () => {
-    fsExtraMock.readFile.and.returnValue(
-      `import { Component } from '@angular/core';
+    const tsSourceFile = `import { Component } from '@angular/core';
 
 import { SkyWindowRef, SkyDatepickerModule, ListSearchModel, SkyListModule } from '@blackbaud/skyux/dist/core';
+
+import { SkyModalService } from '@blackbaud/skyux/dist/modules/modal/modal.service';
 
 import { SkyAppTestModule } from '@blackbaud/skyux-builder/runtime/testing/browser';
 
 export class SomeClass { }
-`
-    );
+`;
 
-    findInFilesMock.find.and.returnValue({
-      'file1.ts': {
-        matches: [`
-import { SkyWindowRef, SkyDatepickerModule, ListSearchModel, SkyListModule } from '@blackbaud/skyux/dist/core';
-`, `
-import { SkyAppTestModule } from '@blackbaud/skyux-builder/runtime/testing/browser';
-`
+    const scssSourceFile = `@import '@blackbaud/skyux/dist/scss/mixins';
+`;
 
-        ]
+    fsExtraMock.readFile.and.callFake((fileName) => {
+      switch (fileName) {
+        case 'file1.ts':
+          return tsSourceFile;
+        case 'file1.scss':
+          return scssSourceFile;
       }
+    });
+
+    findInFilesMock.find.and.callFake((options, directory, fileFilter) => {
+      const regex = new RegExp(options.term, options.flags);
+
+      switch (fileFilter) {
+        case '\\.ts$':
+          return {
+            'file1.ts': {
+              matches: tsSourceFile.match(regex)
+            }
+          };
+        case '\\.scss$':
+          return {
+            'file1.scss': {
+              matches: scssSourceFile.match(regex)
+            }
+          };
+      }
+
+      return {};
     });
 
     await importPaths.fixImportPaths();
@@ -75,7 +96,17 @@ import {
   ListSearchModel
 } from '@skyux/list-builder/modules/list/state';
 
+import {
+  SkyModalService
+} from '@skyux/modals';
+
 export class SomeClass { }
+`
+    );
+
+    expect(fsExtraMock.writeFile).toHaveBeenCalledWith(
+      'file1.scss',
+      `@import '@skyux/theme/scss/mixins';
 `
     );
 
