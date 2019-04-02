@@ -1,3 +1,9 @@
+# 1.5.0 (2019-04-02)
+
+- Added `SkyPopoverMessage` and `SkySectionedForm` types to package map and added `.` as valid character in import path. [#42](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/42)
+- Added `SkyAppResourcesTestingService` types to package map and made `sky-error` matcher more generic. [#32](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/32)
+- Added `@pact-foundation/pact` as dev dependency. [#41](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/41)
+
 # 1.4.0 (2019-03-19)
 
 - Added `SkyAutocompleteSearchFunctionFilter`, `SkyEmailValidationDirective`, `SkyNavbarModule`, and `SkySectionedFormComponent` types to package map. [#35](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/35)
