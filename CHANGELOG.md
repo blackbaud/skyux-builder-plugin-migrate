@@ -1,3 +1,7 @@
+# 1.5.1 (2019-04-18)
+
+- Fixed issue where `NumericOptions` was not recognized when imported from SKY UX. [#48](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/48)
+
 # 1.5.0 (2019-04-02)
 
 - Added `SkyPopoverMessage` and `SkySectionedForm` types to package map and added `.` as valid character in import path. [#42](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/42)
