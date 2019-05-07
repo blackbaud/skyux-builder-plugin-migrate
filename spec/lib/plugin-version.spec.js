@@ -64,7 +64,7 @@ describe('Plugin version', () => {
       }
 
       expect(errMessage).toBe(
-        `You are using an outdated version of the migration utility.  Please upgrade the migration utility by running npm \`i -g @skyux-sdk/builder-plugin-migrate@latest\`,  then try running the migration again.
+        `You are using an outdated version of the migration utility.  Please upgrade the migration utility by running \`npm i -g @skyux-sdk/builder-plugin-migrate@latest\`,  then try running the migration again.
 Current version: 1.2.2
 Latest version: 1.2.3`
       );
