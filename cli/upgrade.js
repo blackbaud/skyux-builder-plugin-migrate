@@ -5,6 +5,11 @@ const appDependencies = require('../lib/app-dependencies');
 const jsonUtils = require('../lib/json-utils');
 const cleanup = require('../lib/cleanup');
 
+function isReferenced(packageName, packageJson) {
+  return (packageJson.devDependencies && packageJson.devDependencies[packageName]) ||
+    (packageJson.dependencies && packageJson.dependencies[packageName]);
+}
+
 async function upgrade() {
   await pluginVersion.verifyLatestVersion();
 
@@ -22,11 +27,11 @@ async function upgrade() {
 
   let doneMsg = 'Done.';
 
-  if (packageJson.devDependencies && packageJson.devDependencies['typescript']) {
-    doneMsg += '  This project includes a reference to TypeScript, but its version ' +
-    'was not updated automatically because TypeScript does not follow semantic versioning. ' +
-    'If running `npm install` results in a peer dependency warning for TypeScript, you may ' +
-    'need to update the version of TypeScript manually.';
+  if (isReferenced('typescript', packageJson) || isReferenced('zone.js', packageJson)) {
+    doneMsg += '  This project includes a reference to TypeScript and/or Zone.js, but the versions ' +
+    'wer not updated automatically because of Angular\'s version requirements for these libraries.  ' +
+    'If running `skyux install` results in a peer dependency warning for one of these libraries, you may ' +
+    'need to update these versions manually.';
   }
 
   logger.info(doneMsg);
