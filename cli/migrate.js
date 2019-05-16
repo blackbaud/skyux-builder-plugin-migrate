@@ -16,6 +16,7 @@ const webpack = require('../lib/webpack');
 const nvmrc = require('../lib/nvmrc');
 const gitignore = require('../lib/gitignore');
 const cleanup = require('../lib/cleanup');
+const stacheUtils = require('../lib/stache');
 
 async function getPackageJson() {
   const packageJson = await jsonUtils.readJson('package.json');
@@ -49,6 +50,7 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
 
   removeDependency(packageJson, '@blackbaud/skyux');
   removeDependency(packageJson, '@blackbaud/skyux-builder');
+  removeDependency(packageJson, '@blackbaud/stache');
 
   for (const dependency of sortUtils.sortedKeys(dependencies.dependencies)) {
     if (isLib) {
@@ -174,6 +176,12 @@ async function migrate() {
 
   const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
 
+  const isStacheSpa = (packageJson.dependencies['@blackbaud/stache'] !== undefined);
+
+  if (isStacheSpa) {
+    await stacheUtils.renameDeprecatedComponents();
+  }
+
   const packageList = await packageMap.createPackageList();
 
   // Create Angular module file.
@@ -185,7 +193,7 @@ async function migrate() {
   );
 
   // Update package.json dependencies and devDependencies.
-  const dependencies = await appDependencies.createPackageJsonDependencies(packageList);
+  const dependencies = await appDependencies.createPackageJsonDependencies(packageList, isStacheSpa);
 
   await writePackageJson(packageJson, isLib, dependencies, packageList);
 
