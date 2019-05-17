@@ -176,7 +176,10 @@ async function migrate() {
 
   const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
 
-  const isStacheSpa = (packageJson.dependencies['@blackbaud/stache'] !== undefined);
+  const isStacheSpa = (
+    packageJson.dependencies['@blackbaud/stache'] ||
+    packageJson.dependencies['@blackbaud/skyux-lib-stache']
+  );
 
   if (isStacheSpa) {
     await stacheUtils.renameDeprecatedComponents();
