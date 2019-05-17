@@ -203,10 +203,34 @@ describe('App dependencies', () => {
   describe('addSkyPeerDependencies() method', () => {
 
     it('should add peer dependencies for SKY UX dependencies', async () => {
-      getPackageJsonMock.and.returnValue({
-        name: '@skyux/indicators',
-        peerDependencies: {
-          foo: '^9.8.0'
+      getPackageJsonMock.and.callFake((packageName) => {
+        switch (packageName) {
+          case '@skyux/indicators':
+            return {
+              name: '@skyux/indicators',
+              peerDependencies: {
+                '@blackbaud/skyux-lib-foo': '^9.8.0'
+              }
+            };
+          case '@blackbaud/skyux-lib-foo':
+            // Check that peers are getting added recursively
+            // (`@blackbaud/skyux-lib-foo` requires a peer of `@skyux/bar`).
+            return {
+              name: '@blackbaud/skyux-lib-foo',
+              peerDependencies: {
+                '@skyux/bar': '^9.8.0'
+              }
+            };
+          case '@skyux/bar':
+            // Confirm that circular peers do not cause an infinite loop.
+            return {
+              name: '@skyux/bar',
+              peerDependencies: {
+                '@blackbaud/skyux-lib-foo': '^9.8.0'
+              }
+            };
+          default:
+            return {};
         }
       });
 
@@ -218,8 +242,9 @@ describe('App dependencies', () => {
 
       expect(dependencies).toEqual(
         jasmine.objectContaining({
-          '@skyux/indicators': '9.8.7',
-          'foo': '9.8.7'
+          '@skyux/bar': '9.8.7',
+          '@blackbaud/skyux-lib-foo': '9.8.7',
+          '@skyux/indicators': '9.8.7'
         })
       );
     });
