@@ -26,6 +26,8 @@ describe('Upgrade', () => {
           return '4.5.6';
         case 'typescript':
           return '2.2';
+        case 'zone.js':
+          return '0.9.0';
       }
     });
 
@@ -116,7 +118,30 @@ describe('Upgrade', () => {
     );
 
     expect(loggerMock.info).toHaveBeenCalledWith(
-      jasmine.stringMatching(/This project includes a reference to TypeScript/)
+      jasmine.stringMatching(/This project includes a reference to/)
+    );
+  });
+
+  it('should not upgrade TypeScript', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      dependencies: {
+        'zone.js': '0.8.29'
+      }
+    });
+
+    await upgrade();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        dependencies: {
+          'zone.js': '0.8.29'
+        }
+      }
+    );
+
+    expect(loggerMock.info).toHaveBeenCalledWith(
+      jasmine.stringMatching(/This project includes a reference to/)
     );
   });
 

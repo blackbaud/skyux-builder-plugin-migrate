@@ -207,7 +207,7 @@ async function migrate() {
 
   await cleanup.deleteDependencies();
 
-  logger.info('Done. For next steps, see the SKY UX migration guide at https://developer.blackbaud.com/skyux/migration-guide');
+  logger.info('Done. For next steps, see the SKY UX migration guide at https://developer.blackbaud.com/skyux-migration-guide');
 }
 
 module.exports = migrate;
