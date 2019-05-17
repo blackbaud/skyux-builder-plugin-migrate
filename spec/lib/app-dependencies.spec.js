@@ -186,6 +186,14 @@ describe('App dependencies', () => {
                 '@skyux/bar': '^9.8.0'
               }
             };
+          case '@skyux/bar':
+            // Confirm that circular peers do not cause an infinite loop.
+            return {
+              name: '@skyux/bar',
+              peerDependencies: {
+                '@blackbaud/skyux-lib-foo': '^9.8.0'
+              }
+            };
           default:
             return {};
         }
