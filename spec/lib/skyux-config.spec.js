@@ -112,4 +112,60 @@ describe('SKY UX config', () => {
       })
     );
   });
+
+  it('should add plugins from package.json', async () => {
+    skyuxconfigMock = {};
+
+    packageJsonMock = {
+      devDependencies: {
+        '@blackbaud/skyux-builder-plugin-foo': '1.0.0',
+        '@skyux-sdk/builder-plugin-bar': '1.0.0',
+        'typescript': '3.0.0'
+      }
+    };
+
+    await skyuxConfig.updateSkyuxConfig();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'skyuxconfig.json',
+      jasmine.objectContaining({
+        plugins: [
+          '@blackbaud/skyux-builder-plugin-foo',
+          '@skyux-sdk/builder-plugin-bar'
+        ]
+      })
+    );
+  });
+
+  it('should add to existing plugins from package.json', async () => {
+    skyuxconfigMock = {
+      plugins: [
+        '@skyux-sdk/builder-plugin-existing',
+        '@skyux-sdk/builder-plugin-duplicate'
+      ]
+    };
+
+    packageJsonMock = {
+      devDependencies: {
+        '@blackbaud/skyux-builder-plugin-foo': '1.0.0',
+        '@skyux-sdk/builder-plugin-bar': '1.0.0',
+        '@skyux-sdk/builder-plugin-duplicate': '1.0.0',
+        'typescript': '3.0.0'
+      }
+    };
+
+    await skyuxConfig.updateSkyuxConfig();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'skyuxconfig.json',
+      jasmine.objectContaining({
+        plugins: [
+          '@skyux-sdk/builder-plugin-existing',
+          '@skyux-sdk/builder-plugin-duplicate',
+          '@blackbaud/skyux-builder-plugin-foo',
+          '@skyux-sdk/builder-plugin-bar'
+        ]
+      })
+    );
+  });
 });
