@@ -180,17 +180,10 @@ async function migrate() {
 
   if (isStacheSpa) {
     await stacheUtils.renameDeprecatedComponents();
+    await stacheUtils.updateStacheImportPaths();
   }
 
   const packageList = await packageMap.createPackageList();
-
-  // Create Angular module file.
-  const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
-
-  await fs.writeFile(
-    path.join('src', 'app', 'app-sky.module.ts'),
-    moduleSource
-  );
 
   // Update package.json dependencies and devDependencies.
   const dependencies = await appDependencies.createPackageJsonDependencies(
@@ -199,6 +192,19 @@ async function migrate() {
   );
 
   await writePackageJson(packageJson, isLib, dependencies, packageList);
+
+  // Create Angular module file.
+  if (isStacheSpa) {
+    // Don't include StacheModule in the AppSkyModule.
+    delete packageList['@blackbaud/skyux-lib-stache'];
+  }
+
+  const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
+
+  await fs.writeFile(
+    path.join('src', 'app', 'app-sky.module.ts'),
+    moduleSource
+  );
 
   await updateAppExtras();
 
