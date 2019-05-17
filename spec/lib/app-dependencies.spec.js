@@ -174,14 +174,14 @@ describe('App dependencies', () => {
             return {
               name: '@skyux/indicators',
               peerDependencies: {
-                '@skyux/foo': '^9.8.0'
+                '@blackbaud/skyux-lib-foo': '^9.8.0'
               }
             };
-          case '@skyux/foo':
+          case '@blackbaud/skyux-lib-foo':
             // Check that peers are getting added recursively
-            // (`@skyux/foo` requires a peer of `@skyux/bar`).
+            // (`@blackbaud/skyux-lib-foo` requires a peer of `@skyux/bar`).
             return {
-              name: '@skyux/foo',
+              name: '@blackbaud/skyux-lib-foo',
               peerDependencies: {
                 '@skyux/bar': '^9.8.0'
               }
@@ -200,7 +200,7 @@ describe('App dependencies', () => {
       expect(dependencies).toEqual(
         jasmine.objectContaining({
           '@skyux/bar': '9.8.7',
-          '@skyux/foo': '9.8.7',
+          '@blackbaud/skyux-lib-foo': '9.8.7',
           '@skyux/indicators': '9.8.7'
         })
       );
