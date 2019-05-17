@@ -193,7 +193,10 @@ async function migrate() {
   );
 
   // Update package.json dependencies and devDependencies.
-  const dependencies = await appDependencies.createPackageJsonDependencies(packageList, isStacheSpa);
+  const dependencies = await appDependencies.createPackageJsonDependencies(
+    packageList,
+    isStacheSpa
+  );
 
   await writePackageJson(packageJson, isLib, dependencies, packageList);
 
