@@ -5,6 +5,7 @@ describe('Migrate', () => {
   let migrate;
   let fsExtraMock;
   let appDependenciesMock;
+  let appSkyModuleMock;
   let packageMapMock;
   let importPathsMock;
   let jsonUtilsMock;
@@ -16,6 +17,7 @@ describe('Migrate', () => {
   let gitignoreMock;
   let pluginVersionMock;
   let cleanupMock;
+  let stacheUtilsMock;
 
   beforeEach(() => {
     fsExtraMock = {
@@ -122,9 +124,24 @@ export class AppExtrasModule { }
       verifyLatestVersion: jasmine.createSpy('verifyLatestVersion')
     };
 
+    stacheUtilsMock = {
+      isStacheSpa: jasmine.createSpy('isStacheSpa').and.returnValue(false),
+      renameDeprecatedComponents: jasmine.createSpy('renameDeprecatedComponents'),
+      updateStacheImportPaths: jasmine.createSpy('updateStacheImportPaths')
+    };
+
+    appSkyModuleMock = {
+      createAppSkyModule: jasmine.createSpy('createAppSkyModule').and.callFake((isLib, packageList) => {
+        return Object.keys(packageList).map((packageName) => {
+          return `import { ${packageList[packageName]} } from '${packageName}';`;
+        }).join('\n');
+      })
+    };
+
     mock('fs-extra', fsExtraMock);
 
     mock('../../lib/app-dependencies', appDependenciesMock);
+    mock('../../lib/app-sky-module', appSkyModuleMock);
     mock('../../lib/package-map', packageMapMock);
     mock('../../lib/import-paths', importPathsMock);
     mock('../../lib/json-utils', jsonUtilsMock);
@@ -136,6 +153,7 @@ export class AppExtrasModule { }
     mock('../../lib/gitignore', gitignoreMock);
     mock('../../lib/plugin-version', pluginVersionMock);
     mock('../../lib/cleanup', cleanupMock);
+    mock('../../lib/stache', stacheUtilsMock);
 
     migrate = mock.reRequire('../../cli/migrate');
   });
@@ -420,4 +438,71 @@ export class AppExtrasModule { }
     );
   });
 
+  it('should remove deprecated dependencies', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      name: '@blackbaud/skyux-spa-migrate-unit-test',
+      dependencies: {
+        '@blackbaud/skyux-builder': '1.0.0',
+        '@blackbaud/skyux': '1.0.0',
+        '@blackbaud/stache': '1.0.0'
+      },
+      devDependencies: {
+        '@blackbaud/skyux-builder': '1.0.0',
+        '@blackbaud/skyux': '1.0.0',
+        '@blackbaud/stache': '1.0.0'
+      },
+      peerDependencies: {
+        '@blackbaud/skyux-builder': '1.0.0',
+        '@blackbaud/skyux': '1.0.0',
+        '@blackbaud/stache': '1.0.0'
+      }
+    });
+
+    await migrate();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        name: '@blackbaud/skyux-spa-migrate-unit-test',
+        dependencies: {
+          '@skyux/core': '3.0.5',
+          '@skyux/flyout': '3.0.1'
+        },
+        devDependencies: {
+          '@skyux-sdk/builder': '3.0.0'
+        },
+        peerDependencies: { }
+      }
+    );
+  });
+
+  it('should rename deprecated stache tags and imports if stache SPA', async () => {
+    stacheUtilsMock.isStacheSpa.and.returnValue(true);
+
+    await migrate();
+
+    expect(stacheUtilsMock.renameDeprecatedComponents).toHaveBeenCalled();
+    expect(stacheUtilsMock.updateStacheImportPaths).toHaveBeenCalled();
+  });
+
+  it('should not include StacheModule in AppSkyModule', async () => {
+    packageMapMock.createPackageList.and.returnValue({
+      '@skyux/flyout': [
+        'SkyFlyoutModule'
+      ],
+      '@blackbaud/skyux-lib-stache': [
+        'StacheModule'
+      ]
+    });
+
+    stacheUtilsMock.isStacheSpa.and.returnValue(true);
+
+    await migrate();
+
+    expect(appSkyModuleMock.createAppSkyModule).toHaveBeenCalledWith(false, {
+      '@skyux/flyout': [ 'SkyFlyoutModule' ]
+    });
+
+    expect(fsExtraMock.writeFile.calls.argsFor(0)[1]).not.toContain('StacheModule');
+  });
 });

@@ -16,6 +16,7 @@ const webpack = require('../lib/webpack');
 const nvmrc = require('../lib/nvmrc');
 const gitignore = require('../lib/gitignore');
 const cleanup = require('../lib/cleanup');
+const stacheUtils = require('../lib/stache');
 
 async function getPackageJson() {
   const packageJson = await jsonUtils.readJson('package.json');
@@ -49,6 +50,7 @@ async function writePackageJson(packageJson, isLib, dependencies, packageList) {
 
   removeDependency(packageJson, '@blackbaud/skyux');
   removeDependency(packageJson, '@blackbaud/skyux-builder');
+  removeDependency(packageJson, '@blackbaud/stache');
 
   for (const dependency of sortUtils.sortedKeys(dependencies.dependencies)) {
     if (isLib) {
@@ -174,20 +176,32 @@ async function migrate() {
 
   const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
 
+  const isStacheSpa = stacheUtils.isStacheSpa(packageJson);
+
+  if (isStacheSpa) {
+    await stacheUtils.renameDeprecatedComponents();
+    await stacheUtils.updateStacheImportPaths();
+  }
+
   const packageList = await packageMap.createPackageList();
 
+  // Update package.json dependencies and devDependencies.
+  const dependencies = await appDependencies.createPackageJsonDependencies(packageList);
+
+  await writePackageJson(packageJson, isLib, dependencies, packageList);
+
   // Create Angular module file.
+  if (isStacheSpa) {
+    // Don't include StacheModule in the AppSkyModule.
+    delete packageList['@blackbaud/skyux-lib-stache'];
+  }
+
   const moduleSource = appSkyModule.createAppSkyModule(isLib, packageList);
 
   await fs.writeFile(
     path.join('src', 'app', 'app-sky.module.ts'),
     moduleSource
   );
-
-  // Update package.json dependencies and devDependencies.
-  const dependencies = await appDependencies.createPackageJsonDependencies(packageList);
-
-  await writePackageJson(packageJson, isLib, dependencies, packageList);
 
   await updateAppExtras();
 
