@@ -28,26 +28,113 @@ describe('stache', () => {
     mock.stopAll();
   });
 
-  fit('should replace deprecated stache tags with `sky` equivalents', async () => {
-    // const html = 'asdf';
-    // const regex = new RegExp(options.term, options.flags);
+  it('should replace deprecated stache tags with `sky` equivalents', async () => {
+    const htmlContents = `
+<stache-code-block
+  languageType="js"
+></stache-code-block>
+<stache-code></stache-code>
+<stache-row>
+  <stache-column
+    screenSmall="5"
+  >
+  </stache-column>
+</stache-row>
+<stache-copy-to-clipboard [copyTarget]="copyTarget">
+</stache-copy-to-clipboard>
+<stache-hero>
+  <stache-hero-heading></stache-hero-heading>
+  <stache-hero-subheading></stache-hero-subheading>
+</stache-hero>
+<stache-image
+></stache-image>
+<stache-internal></stache-internal>
+<stache-video></stache-video>
+<!-- THESE SHOULD NOT CHANGE: -->
+<stache></stache>
+<stache-layout></stache-layout>
+`;
 
-    // findInFilesMock.find.and.returnValue({
-    //   'file1.ts': {
-    //     matches: html.match(regex)
-    //   }
-    // });
+    const expectedHtml = `
+<sky-code-block
+  languageType="js"
+></sky-code-block>
+<sky-code></sky-code>
+<sky-row>
+  <sky-column
+    screenSmall="5"
+  >
+  </sky-column>
+</sky-row>
+<sky-copy-to-clipboard [copyTarget]="copyTarget">
+</sky-copy-to-clipboard>
+<sky-hero>
+  <sky-hero-heading></sky-hero-heading>
+  <sky-hero-subheading></sky-hero-subheading>
+</sky-hero>
+<sky-image
+></sky-image>
+<sky-restricted-view></sky-restricted-view>
+<sky-video></sky-video>
+<!-- THESE SHOULD NOT CHANGE: -->
+<stache></stache>
+<stache-layout></stache-layout>
+`;
 
-    // fsExtraMock.readFile.and.callFake((fileName) => {
-    //   switch (fileName) {
-    //     case 'file1.html':
-    //       return html;
-    //   }
-    // });
+    fsExtraMock.readFile.and.callFake(() => {
+      return htmlContents;
+    });
 
-    // await stacheUtils.renameDeprecatedComponents();
+    findInFilesMock.find.and.callFake((options) => {
+      const regex = new RegExp(options.term, options.flags);
+      const matches = htmlContents.match(regex);
 
-    // expect(fsExtraMock.writeFile).toHaveBeenCalledWith();
+      if (!matches) {
+        return {};
+      }
 
+      return {
+        'file1.html': {
+          matches
+        }
+      };
+    });
+
+    await stacheUtils.renameDeprecatedComponents();
+
+    expect(fsExtraMock.writeFile).toHaveBeenCalledWith('file1.html', expectedHtml);
+  });
+
+  it('should update stache import paths', async () => {
+    const fileContents = `
+import { StacheModule } from '@blackbaud/stache';
+`;
+
+    const expectedContents = `
+import { StacheModule } from '@blackbaud/skyux-lib-stache';
+`;
+
+    fsExtraMock.readFile.and.callFake(() => {
+      return fileContents;
+    });
+
+    findInFilesMock.find.and.callFake((options) => {
+      const regex = new RegExp(options.term, options.flags);
+      const matches = fileContents.match(regex);
+
+      if (!matches) {
+        return {};
+      }
+
+      return {
+        'file1.ts': {
+          matches
+        }
+      };
+    });
+
+    await stacheUtils.updateStacheImportPaths();
+
+    expect(fsExtraMock.writeFile).toHaveBeenCalledWith('file1.ts', expectedContents);
   });
 });
