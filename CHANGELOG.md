@@ -1,3 +1,12 @@
+# 1.6.0 (2019-05-20)
+
+- Added functionality to assist in migrating Stache SPAs. [#57](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/57)
+- Added the ability for packages to install recommended Builder plugins during `skyux migrate`. [#56](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/56)
+- Fixed `skyux upgrade` to recursively look up peer dependencies. [#55](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/55)
+- Fixed `skyux upgrade` to pull in the supported version of the `zone.js` dependency. [#53](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/53)
+- Fixed `skyux upgrade` to support packages with pre-release versions. [#44](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/44)
+- Fixed `skyux migrate` to provide the correct URL to the migration guide. [#45](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/45)
+
 # 1.5.1 (2019-04-18)
 
 - Fixed issue where `NumericOptions` was not recognized when imported from SKY UX. [#48](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/48)
