@@ -4,7 +4,20 @@ describe('SKY UX config', () => {
   let jsonUtilsMock;
   let skyuxConfig;
 
+  let packageJsonMock;
+  let skyuxconfigMock;
+
   beforeEach(() => {
+    packageJsonMock = {};
+
+    skyuxconfigMock = {
+      app: {
+        styles: [
+          '@skyux/theme/css/sky.css'
+        ]
+      }
+    };
+
     jsonUtilsMock = {
       readJson: jasmine.createSpy('readJson'),
       writeJson: jasmine.createSpy('writeJson')
@@ -13,6 +26,16 @@ describe('SKY UX config', () => {
     mock('../../lib/json-utils', jsonUtilsMock);
 
     skyuxConfig = mock.reRequire('../../lib/skyux-config');
+
+    jsonUtilsMock.readJson.and.callFake((fileName) => {
+      switch (fileName) {
+        case 'skyuxconfig.json':
+          return skyuxconfigMock;
+
+        case 'package.json':
+          return packageJsonMock;
+      }
+    });
   });
 
   afterEach(() => {
@@ -20,9 +43,9 @@ describe('SKY UX config', () => {
   });
 
   it('should set the $schema property as the first property', async () => {
-    jsonUtilsMock.readJson.and.returnValue({
+    skyuxconfigMock = {
       auth: true
-    });
+    };
 
     await skyuxConfig.updateSkyuxConfig();
 
@@ -34,7 +57,7 @@ describe('SKY UX config', () => {
   });
 
   it('should add the SKY UX stylesheet if it is not present', async () => {
-    jsonUtilsMock.readJson.and.returnValue({});
+    skyuxconfigMock = {};
 
     await skyuxConfig.updateSkyuxConfig();
 
@@ -51,13 +74,13 @@ describe('SKY UX config', () => {
   });
 
   it('should not add the SKY UX stylesheet if it is already present', async () => {
-    jsonUtilsMock.readJson.and.returnValue({
+    skyuxconfigMock =  {
       app: {
         styles: [
           '@skyux/theme/css/sky.css'
         ]
       }
-    });
+    };
 
     await skyuxConfig.updateSkyuxConfig();
 
@@ -74,7 +97,7 @@ describe('SKY UX config', () => {
   });
 
   it('should handle a missing skyuxconfig.json file', async () => {
-    jsonUtilsMock.readJson.and.returnValue(undefined);
+    skyuxconfigMock = undefined;
 
     await skyuxConfig.updateSkyuxConfig();
 
@@ -86,6 +109,62 @@ describe('SKY UX config', () => {
             '@skyux/theme/css/sky.css'
           ]
         }
+      })
+    );
+  });
+
+  it('should add plugins from package.json', async () => {
+    skyuxconfigMock = {};
+
+    packageJsonMock = {
+      devDependencies: {
+        '@blackbaud/skyux-builder-plugin-foo': '1.0.0',
+        '@skyux-sdk/builder-plugin-bar': '1.0.0',
+        'typescript': '3.0.0'
+      }
+    };
+
+    await skyuxConfig.updateSkyuxConfig();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'skyuxconfig.json',
+      jasmine.objectContaining({
+        plugins: [
+          '@blackbaud/skyux-builder-plugin-foo',
+          '@skyux-sdk/builder-plugin-bar'
+        ]
+      })
+    );
+  });
+
+  it('should add to existing plugins from package.json', async () => {
+    skyuxconfigMock = {
+      plugins: [
+        '@skyux-sdk/builder-plugin-existing',
+        '@skyux-sdk/builder-plugin-duplicate'
+      ]
+    };
+
+    packageJsonMock = {
+      devDependencies: {
+        '@blackbaud/skyux-builder-plugin-foo': '1.0.0',
+        '@skyux-sdk/builder-plugin-bar': '1.0.0',
+        '@skyux-sdk/builder-plugin-duplicate': '1.0.0',
+        'typescript': '3.0.0'
+      }
+    };
+
+    await skyuxConfig.updateSkyuxConfig();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'skyuxconfig.json',
+      jasmine.objectContaining({
+        plugins: [
+          '@skyux-sdk/builder-plugin-existing',
+          '@skyux-sdk/builder-plugin-duplicate',
+          '@blackbaud/skyux-builder-plugin-foo',
+          '@skyux-sdk/builder-plugin-bar'
+        ]
       })
     );
   });
