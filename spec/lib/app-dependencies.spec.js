@@ -213,6 +213,41 @@ describe('App dependencies', () => {
       expect(dependencies).toBeUndefined();
     });
 
+    it('should handle prerelease versions', async () => {
+      await appDependencies.upgradeDependencies({
+        'prerelease-foo': '1.0.0-rc.0'
+      });
+
+      expect(latestVersionMock).toHaveBeenCalledWith(
+        'prerelease-foo',
+        {
+          version: '^1.0.0-rc.0'
+        }
+      );
+
+      await appDependencies.upgradeDependencies({
+        'prerelease-foo': '1.0.0-alpha.0'
+      });
+
+      expect(latestVersionMock).toHaveBeenCalledWith(
+        'prerelease-foo',
+        {
+          version: '^1.0.0-alpha.0'
+        }
+      );
+
+      await appDependencies.upgradeDependencies({
+        'prerelease-foo': '1.0.0-beta.0'
+      });
+
+      expect(latestVersionMock).toHaveBeenCalledWith(
+        'prerelease-foo',
+        {
+          version: '^1.0.0-beta.0'
+        }
+      );
+    });
+
   });
 
   describe('addSkyPeerDependencies() method', () => {
