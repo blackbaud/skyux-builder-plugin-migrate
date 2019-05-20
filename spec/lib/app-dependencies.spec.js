@@ -89,13 +89,13 @@ describe('App dependencies', () => {
       );
     });
 
-    it('should skip installation of specified pacakges', async () => {
+    it('should skip installation of specified packages', async () => {
       getPackageJsonMock.and.returnValue({
         name: '@skyux/foo'
       });
 
       packageMapMock.getPackage.and.returnValue({
-        pacakge: '@skyux/foo',
+        package: '@skyux/foo',
         skipInstall: true
       });
 
@@ -111,6 +111,38 @@ describe('App dependencies', () => {
         })
       );
 
+    });
+
+    it('should add builder plugins from the package map', async () => {
+      getPackageJsonMock.and.returnValue({
+        name: '@skyux/indicators'
+      });
+
+      packageMapMock.getPackage.and.returnValue({
+        package: '@skyux/indicators',
+        builderPlugins: [
+          '@blackbaud/skyux-builder-plugin-foo',
+          '@skyux-sdk/builder-plugin-bar'
+        ]
+      });
+
+      const result = await appDependencies.createPackageJsonDependencies(
+        {
+          '@skyux/indicators': { }
+        }
+      );
+
+      expect(result).toEqual(
+        {
+          dependencies: jasmine.objectContaining({
+            '@skyux/indicators': '9.8.7'
+          }),
+          devDependencies: jasmine.objectContaining({
+            '@blackbaud/skyux-builder-plugin-foo': '9.8.7',
+            '@skyux-sdk/builder-plugin-bar': '9.8.7'
+          })
+        }
+      );
     });
 
     it('should add Stache library if `StacheModule` found in source', async () => {
