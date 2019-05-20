@@ -137,4 +137,26 @@ import { StacheModule } from '@blackbaud/skyux-lib-stache';
 
     expect(fsExtraMock.writeFile).toHaveBeenCalledWith('file1.ts', expectedContents);
   });
+
+  it('should check if is stache SPA based on dependencies', () => {
+    let result = stacheUtils.isStacheSpa({});
+
+    expect(result).toEqual(false);
+
+    result = stacheUtils.isStacheSpa({
+      dependencies: {
+        '@blackbaud/stache': '1.0.0'
+      }
+    });
+
+    expect(result).toEqual(true);
+
+    result = stacheUtils.isStacheSpa({
+      dependencies: {
+        '@blackbaud/skyux-lib-stache': '1.0.0'
+      }
+    });
+
+    expect(result).toEqual(true);
+  });
 });

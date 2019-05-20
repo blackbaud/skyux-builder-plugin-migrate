@@ -113,6 +113,24 @@ describe('App dependencies', () => {
 
     });
 
+    it('should add Stache library if `StacheModule` found in source', async () => {
+      getPackageJsonMock.and.returnValue({
+        name: '@skyux/indicators'
+      });
+
+      const result = await appDependencies.createPackageJsonDependencies(
+        {
+          '@blackbaud/skyux-lib-stache': { }
+        }
+      );
+
+      expect(result.dependencies).toEqual(
+        jasmine.objectContaining({
+          '@blackbaud/skyux-lib-stache': '9.8.7'
+        })
+      );
+    });
+
   });
 
   describe('upgradeDependencies() method', () => {
