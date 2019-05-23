@@ -1,3 +1,7 @@
+# 1.7.0 (2019-05-23)
+
+- Added `@skyux-sdk/e2e` to list of `devDependencies` to install during `skyux migrate` and `skyux upgrade` commands. [#60](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/60)
+
 # 1.6.0 (2019-05-20)
 
 - Added functionality to assist in migrating Stache SPAs. [#57](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/57)
