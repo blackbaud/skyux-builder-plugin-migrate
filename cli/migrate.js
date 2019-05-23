@@ -181,6 +181,7 @@ async function migrate() {
   if (isStacheSpa) {
     await stacheUtils.renameDeprecatedComponents();
     await stacheUtils.updateStacheImportPaths();
+    await stacheUtils.updatePackageDependencies(packageJson);
   }
 
   const packageList = await packageMap.createPackageList();

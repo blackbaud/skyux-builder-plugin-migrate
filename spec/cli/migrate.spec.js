@@ -127,7 +127,8 @@ export class AppExtrasModule { }
     stacheUtilsMock = {
       isStacheSpa: jasmine.createSpy('isStacheSpa').and.returnValue(false),
       renameDeprecatedComponents: jasmine.createSpy('renameDeprecatedComponents'),
-      updateStacheImportPaths: jasmine.createSpy('updateStacheImportPaths')
+      updateStacheImportPaths: jasmine.createSpy('updateStacheImportPaths'),
+      updatePackageDependencies: jasmine.createSpy('updatePackageDependencies')
     };
 
     appSkyModuleMock = {

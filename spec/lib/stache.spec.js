@@ -21,6 +21,12 @@ describe('stache', () => {
       info() {}
     });
 
+    mock('../../lib/app-dependencies', {
+      upgradeDependencies(dependencies) {
+        return Promise.resolve(dependencies);
+      }
+    });
+
     stacheUtils = mock.reRequire('../../lib/stache');
   });
 
@@ -158,5 +164,34 @@ import { StacheModule } from '@blackbaud/skyux-lib-stache';
     });
 
     expect(result).toEqual(true);
+  });
+
+  it('should add the new stache library to package dependencies', async () => {
+    const packageJson = {};
+
+    await stacheUtils.updatePackageDependencies(packageJson);
+
+    expect(packageJson).toEqual({
+      dependencies: {
+        '@blackbaud/skyux-lib-stache': 'latest'
+      }
+    });
+  });
+
+  it('should update stache plugins to the latest versions', async () => {
+    const packageJson = {
+      dependencies: {
+        '@blackbaud/skyux-builder-plugin-auth-email-whitelist': '1.0.0'
+      }
+    };
+
+    await stacheUtils.updatePackageDependencies(packageJson);
+
+    expect(packageJson).toEqual({
+      dependencies: {
+        '@blackbaud/skyux-lib-stache': 'latest',
+        '@blackbaud/skyux-builder-plugin-auth-email-whitelist': 'latest'
+      }
+    });
   });
 });
