@@ -122,7 +122,7 @@ describe('Upgrade', () => {
     );
   });
 
-  it('should not upgrade TypeScript', async () => {
+  it('should not upgrade zone.js', async () => {
     jsonUtilsMock.readJson.and.returnValue({
       dependencies: {
         'zone.js': '0.8.29'

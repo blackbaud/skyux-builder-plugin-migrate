@@ -248,6 +248,19 @@ describe('App dependencies', () => {
       );
     });
 
+    it('should handle "latest" versions', async () => {
+      await appDependencies.upgradeDependencies({
+        'prerelease-foo': 'latest'
+      });
+
+      expect(latestVersionMock).toHaveBeenCalledWith(
+        'prerelease-foo',
+        {
+          version: '9'
+        }
+      );
+    });
+
   });
 
   describe('addSkyPeerDependencies() method', () => {
