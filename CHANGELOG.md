@@ -1,6 +1,6 @@
 # 1.7.0 (2019-05-23)
 
-- Added `@skyux-sdk/e2e` to list of `devDependencies` to install during `skyux migrate` and `skyux upgrade` commands. [#60](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/60)
+- Added `@skyux-sdk/e2e` to the list of `devDependencies` to install during the `skyux migrate` and `skyux upgrade` commands. [#60](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/60)
 - Fixed Stache functionality to install the latest version of `@blackbaud/skyux-builder-plugin-auth-email-whitelist`. [#61](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/61)
 
 # 1.6.0 (2019-05-20)
