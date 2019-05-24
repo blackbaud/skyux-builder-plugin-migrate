@@ -1,6 +1,6 @@
 {
   "name": "@skyux-sdk/builder-plugin-migrate",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Migrates a SKY UX application from 2 to 3",
   "main": "index.js",
   "scripts": {
