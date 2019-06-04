@@ -1,6 +1,10 @@
+# 1.7.2 (2019-06-04)
+
+- Fixed a typo in warning message. [#65](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/65)
+
 # 1.7.1 (2019-05-24)
 
-- Fixed Stache functionality to install `@blackbaud/skyux-lib-code-block` if `stache-markdown` component is found within HTML templates. [#60](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/60)
+- Fixed Stache functionality to install `@blackbaud/skyux-lib-code-block` if the `stache-markdown` component is found within HTML templates. [#60](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/60)
 
 # 1.7.0 (2019-05-23)
 
