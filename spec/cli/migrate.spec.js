@@ -409,6 +409,36 @@ export class AppExtrasModule { }
     );
   });
 
+  it('should support official SKY UX libraries', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      name: '@skyux/foobar',
+      devDependencies: {
+        '@blackbaud/skyux': '2.30.0',
+        '@blackbaud/skyux-builder': '1.40.0'
+      }
+    });
+
+    await migrate();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        name: '@skyux/foobar',
+        dependencies: {
+        },
+        devDependencies: {
+          '@skyux/flyout': '3.0.1',
+          '@skyux/core': '3.0.5',
+          '@skyux-sdk/builder': '3.0.0'
+        },
+        peerDependencies: {
+          '@skyux/flyout': '^3.0.1',
+          '@skyux-sdk/builder': '^3.0.0'
+        }
+      }
+    );
+  });
+
   it('should not add AppSkyModule to app extras if it already exists', async () => {
     fsExtraMock.readFile.and.returnValue(
       `import {
