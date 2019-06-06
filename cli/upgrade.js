@@ -29,7 +29,7 @@ async function upgrade() {
 
   if (isReferenced('typescript', packageJson) || isReferenced('zone.js', packageJson)) {
     doneMsg += '  This project includes a reference to TypeScript and/or Zone.js, but the versions ' +
-    'wer not updated automatically because of Angular\'s version requirements for these libraries.  ' +
+    'were not updated automatically because of Angular\'s version requirements for these libraries.  ' +
     'If running `skyux install` results in a peer dependency warning for one of these libraries, you may ' +
     'need to update these versions manually.';
   }

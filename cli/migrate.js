@@ -174,13 +174,17 @@ async function migrate() {
 
   const packageJson = await getPackageJson();
 
-  const isLib = packageJson.name.indexOf('/skyux-lib') >= 0;
+  const isLib = (
+    packageJson.name.indexOf('/skyux-lib') >= 0 ||
+    packageJson.name.indexOf('@skyux/') >= 0
+  );
 
   const isStacheSpa = stacheUtils.isStacheSpa(packageJson);
 
   if (isStacheSpa) {
     await stacheUtils.renameDeprecatedComponents();
     await stacheUtils.updateStacheImportPaths();
+    await stacheUtils.updatePackageDependencies(packageJson);
   }
 
   const packageList = await packageMap.createPackageList();

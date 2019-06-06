@@ -127,7 +127,8 @@ export class AppExtrasModule { }
     stacheUtilsMock = {
       isStacheSpa: jasmine.createSpy('isStacheSpa').and.returnValue(false),
       renameDeprecatedComponents: jasmine.createSpy('renameDeprecatedComponents'),
-      updateStacheImportPaths: jasmine.createSpy('updateStacheImportPaths')
+      updateStacheImportPaths: jasmine.createSpy('updateStacheImportPaths'),
+      updatePackageDependencies: jasmine.createSpy('updatePackageDependencies')
     };
 
     appSkyModuleMock = {
@@ -393,6 +394,36 @@ export class AppExtrasModule { }
       'package.json',
       {
         name: '@blackbaud/skyux-lib-migrate-unit-test',
+        dependencies: {
+        },
+        devDependencies: {
+          '@skyux/flyout': '3.0.1',
+          '@skyux/core': '3.0.5',
+          '@skyux-sdk/builder': '3.0.0'
+        },
+        peerDependencies: {
+          '@skyux/flyout': '^3.0.1',
+          '@skyux-sdk/builder': '^3.0.0'
+        }
+      }
+    );
+  });
+
+  it('should support official SKY UX libraries', async () => {
+    jsonUtilsMock.readJson.and.returnValue({
+      name: '@skyux/foobar',
+      devDependencies: {
+        '@blackbaud/skyux': '2.30.0',
+        '@blackbaud/skyux-builder': '1.40.0'
+      }
+    });
+
+    await migrate();
+
+    expect(jsonUtilsMock.writeJson).toHaveBeenCalledWith(
+      'package.json',
+      {
+        name: '@skyux/foobar',
         dependencies: {
         },
         devDependencies: {
