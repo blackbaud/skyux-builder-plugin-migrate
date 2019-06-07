@@ -1,3 +1,7 @@
+# 1.8.0 (2019-06-07)
+
+- Added missing types from `@skyux/omnibar-interop` package. [#58](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/58)
+
 # 1.7.2 (2019-06-04)
 
 - Fixed a typo in warning message. [#65](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/65)
