@@ -30,14 +30,6 @@ describe('Index', () => {
     expect(result).toBe(true);
   });
 
-  it('should process the upgrade command', async () => {
-    const result = await index.runCommand('upgrade');
-
-    expect(upgradeMock).toHaveBeenCalled();
-
-    expect(result).toBe(true);
-  });
-
   it('should process the version command', async () => {
     const result = await index.runCommand('version');
 
