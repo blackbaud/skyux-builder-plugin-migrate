@@ -3,9 +3,6 @@ async function runCommand(command) {
     case 'migrate':
       await require('./cli/migrate')();
       break;
-    case 'upgrade':
-      await require('./cli/upgrade')();
-      break;
     case 'version':
       await require('./cli/version')();
       break;
