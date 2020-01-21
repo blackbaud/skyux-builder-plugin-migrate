@@ -1,3 +1,7 @@
+# 1.9.0 (2020-01-22)
+
+- Migrated `skyux upgrade` to [`@skyux-sdk/cli`](https://github.com/blackbaud/skyux-sdk-cli).
+
 # 1.8.0 (2019-06-07)
 
 - Added missing types from `@skyux/omnibar-interop` package. [#58](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/58)
