@@ -1,6 +1,6 @@
 # 1.9.0 (2020-01-22)
 
-- Migrated `skyux upgrade` to [`@skyux-sdk/cli`](https://github.com/blackbaud/skyux-sdk-cli).
+- Migrated `skyux upgrade` to [`@skyux-sdk/cli`](https://github.com/blackbaud/skyux-sdk-cli). [#74](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/74)
 
 # 1.8.0 (2019-06-07)
 
