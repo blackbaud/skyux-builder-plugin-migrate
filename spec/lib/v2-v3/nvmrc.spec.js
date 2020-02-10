@@ -11,7 +11,7 @@ describe('nvmrc', () => {
 
     mock('fs-extra', fsExtraMock);
 
-    nvmrc = mock.reRequire('../../lib/nvmrc');
+    nvmrc = mock.reRequire('../../../lib/v2-v3/nvmrc');
   });
 
   it('should update the .nvmrc file', async () => {

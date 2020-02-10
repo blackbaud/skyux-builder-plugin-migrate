@@ -25,7 +25,7 @@ describe('Index', () => {
   it('should process the migrate command', async () => {
     const result = await index.runCommand('migrate');
 
-    expect(migrateMock).toHaveBeenCalled();
+    expect(migrateMock).toHaveBeenCalledWith();
 
     expect(result).toBe(true);
   });
@@ -33,7 +33,7 @@ describe('Index', () => {
   it('should process the version command', async () => {
     const result = await index.runCommand('version');
 
-    expect(versionMock).toHaveBeenCalled();
+    expect(versionMock).toHaveBeenCalledWith();
 
     expect(result).toBe(true);
   });

@@ -13,7 +13,7 @@ describe('gitgnore', () => {
 
     mock('fs-extra', fsExtraMock);
 
-    gitignore = mock.reRequire('../../lib/gitignore');
+    gitignore = mock.reRequire('../../../lib/v2-v3/gitignore');
   });
 
   it('should add .skypagestmp to .gitignore file if it is not present', async () => {

@@ -11,7 +11,7 @@ describe('Package map', () => {
 
     mock('find-in-files', findInFilesMock);
 
-    packageMap = mock.reRequire('../../lib/package-map');
+    packageMap = mock.reRequire('../../../lib/v2-v3/package-map');
   });
 
   afterEach(() => {

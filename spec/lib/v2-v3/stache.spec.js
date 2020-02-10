@@ -21,13 +21,13 @@ describe('stache', () => {
       info() {}
     });
 
-    mock('../../lib/app-dependencies', {
+    mock('../../../lib/v2-v3/app-dependencies', {
       upgradeDependencies(dependencies) {
         return Promise.resolve(dependencies);
       }
     });
 
-    stacheUtils = mock.reRequire('../../lib/stache');
+    stacheUtils = mock.reRequire('../../../lib/v2-v3/stache');
   });
 
   afterEach(() => {

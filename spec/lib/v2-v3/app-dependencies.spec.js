@@ -30,9 +30,9 @@ describe('App dependencies', () => {
 
     mock('latest-version', latestVersionMock);
     mock('package-json', getPackageJsonMock);
-    mock('../../lib/package-map', packageMapMock);
+    mock('../../../lib/v2-v3/package-map', packageMapMock);
 
-    appDependencies = mock.reRequire('../../lib/app-dependencies');
+    appDependencies = mock.reRequire('../../../lib/v2-v3/app-dependencies');
   });
 
   afterEach(() => {
@@ -312,7 +312,7 @@ describe('App dependencies', () => {
       );
     });
 
-    it('should handle missing dependencies section', async () => {
+    it('should handle missing dependencies section when adding peer dependencies', async () => {
       const dependencies = undefined;
 
       await appDependencies.addSkyPeerDependencies(dependencies);

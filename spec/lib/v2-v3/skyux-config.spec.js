@@ -23,9 +23,9 @@ describe('SKY UX config', () => {
       writeJson: jasmine.createSpy('writeJson')
     };
 
-    mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../../lib/json-utils', jsonUtilsMock);
 
-    skyuxConfig = mock.reRequire('../../lib/skyux-config');
+    skyuxConfig = mock.reRequire('../../../lib/v2-v3/skyux-config');
 
     jsonUtilsMock.readJson.and.callFake((fileName) => {
       switch (fileName) {

@@ -18,7 +18,7 @@ describe('Import paths', () => {
     mock('fs-extra', fsExtraMock);
     mock('find-in-files', findInFilesMock);
 
-    importPaths = mock.reRequire('../../lib/import-paths');
+    importPaths = mock.reRequire('../../../lib/v2-v3/import-paths');
   });
 
   afterEach(() => {

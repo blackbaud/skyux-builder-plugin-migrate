@@ -10,9 +10,9 @@ describe('TS Config', () => {
       writeJson: jasmine.createSpy('writeJson')
     };
 
-    mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../../lib/json-utils', jsonUtilsMock);
 
-    tsConfig = mock.reRequire('../../lib/tsconfig');
+    tsConfig = mock.reRequire('../../../lib/v2-v3/tsconfig');
   });
 
   afterEach(() => {

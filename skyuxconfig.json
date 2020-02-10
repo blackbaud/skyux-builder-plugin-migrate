@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/@skyux/config/skyuxconfig-schema.json",
+  "app": {
+    "styles": [
+      "@skyux/theme/css/sky.css"
+    ]
+  },
+  "plugins": []
+}

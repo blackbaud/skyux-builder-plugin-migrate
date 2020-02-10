@@ -1,4 +1,4 @@
-const appSkyModule = require('../../lib/app-sky-module');
+const appSkyModule = require('../../../lib/v2-v3/app-sky-module');
 
 describe('App SKY module', () => {
 

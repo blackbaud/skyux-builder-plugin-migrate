@@ -18,7 +18,7 @@ describe('Webpack', () => {
     mock('fs-extra', fsExtraMock);
     mock('find-in-files', findInFilesMock);
 
-    webpack = mock.reRequire('../../lib/webpack');
+    webpack = mock.reRequire('../../../lib/v2-v3/webpack');
   });
 
   afterEach(() => {

@@ -10,9 +10,9 @@ describe('TS Lint', () => {
       writeJson: jasmine.createSpy('writeJson')
     };
 
-    mock('../../lib/json-utils', jsonUtilsMock);
+    mock('../../../lib/json-utils', jsonUtilsMock);
 
-    tsLint = mock.reRequire('../../lib/tslint');
+    tsLint = mock.reRequire('../../../lib/v2-v3/tslint');
   });
 
   afterEach(() => {

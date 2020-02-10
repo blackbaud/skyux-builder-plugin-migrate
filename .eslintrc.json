@@ -4,11 +4,14 @@
     "jasmine": true,
     "node": true
   },
-  "extends": "eslint:recommended",
+  "extends": "plugin:jasmine/recommended",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2017
   },
+  "plugins": [
+    "jasmine"
+  ],
   "rules": {
     "indent": [
       "error",
