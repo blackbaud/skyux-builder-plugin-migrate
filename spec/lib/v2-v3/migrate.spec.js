@@ -6,6 +6,7 @@ describe('Migrate v2 to v3', () => {
   let fsExtraMock;
   let appDependenciesMock;
   let appSkyModuleMock;
+  let dependencyUtilMock;
   let packageMapMock;
   let importPathsMock;
   let jsonUtilsMock;
@@ -45,6 +46,10 @@ export class AppExtrasModule { }
       deleteDependencies: jasmine.createSpy('deleteDependencies')
     };
 
+    dependencyUtilMock = {
+      fixDependencyOrder: jasmine.createSpy('fixDependencyOrder')
+    };
+
     appDependenciesMock = {
       createPackageJsonDependencies: jasmine.createSpy('createPackageJsonDependencies').and.returnValue({
         dependencies: {
@@ -54,8 +59,7 @@ export class AppExtrasModule { }
         devDependencies: {
           '@skyux-sdk/builder': '3.0.0'
         }
-      }),
-      fixDependencyOrder: jasmine.createSpy('fixDependencyOrder')
+      })
     };
 
     jsonUtilsMock = {
@@ -140,6 +144,7 @@ export class AppExtrasModule { }
     mock('../../../lib/v2-v3/app-sky-module', appSkyModuleMock);
     mock('../../../lib/v2-v3/package-map', packageMapMock);
     mock('../../../lib/v2-v3/import-paths', importPathsMock);
+    mock('../../../lib/dependency-utils', dependencyUtilMock);
     mock('../../../lib/json-utils', jsonUtilsMock);
     mock('../../../lib/v2-v3/skyux-config', skyuxConfigMock);
     mock('../../../lib/v2-v3/tsconfig', tsConfigMock);
