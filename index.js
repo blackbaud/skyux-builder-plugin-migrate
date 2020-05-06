@@ -1,4 +1,4 @@
-async function runCommand(command) {
+function runCommand(command) {
   switch (command) {
     case 'migrate':
     case 'version':
