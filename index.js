@@ -3,7 +3,7 @@ async function runCommand(command) {
     case 'migrate':
     case 'upgrade':
     case 'version':
-      throw new Error('The `@skyux-sdk/builder-plugin-migrate` is no longer needed or maintained. Please run `npm uninstall -g @skyux-sdk/builder-plugin-migrate` to remove it from your system.');
+      throw new Error('The globally-installed `@skyux-sdk/builder-plugin-migrate` package is no longer needed or maintained. Please run `npm uninstall -g @skyux-sdk/builder-plugin-migrate` to remove it from your system.');
     default:
       return false;
   }
