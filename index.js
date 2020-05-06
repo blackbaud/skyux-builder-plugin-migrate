@@ -1,19 +1,12 @@
 async function runCommand(command) {
   switch (command) {
     case 'migrate':
-      await require('./cli/migrate')();
-      break;
     case 'upgrade':
-      await require('./cli/upgrade')();
-      break;
     case 'version':
-      await require('./cli/version')();
-      break;
+      throw new Error('The `@skyux-sdk/builder-plugin-migrate` is no longer needed or maintained. Please run `npm uninstall -g @skyux-sdk/builder-plugin-migrate` to remove it from your system.');
     default:
       return false;
   }
-
-  return true;
 }
 
 module.exports = {
