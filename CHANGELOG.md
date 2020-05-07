@@ -1,6 +1,6 @@
 # 1.10.0 (2020-05-06)
 
-- Updated all CLI commands to throw an error, informing the user to uninstall the package globally. [#78](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/78)
+- Updated all CLI commands to display an error that informs users to uninstall the package globally. [#78](https://github.com/blackbaud/skyux-sdk-builder-plugin-migrate/pull/78)
 
 # 1.9.0 (2020-01-22)
 
